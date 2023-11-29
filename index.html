@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
+
+  <title>VWorld</title>
+</head>
+<body>
+  <section id="controls">
+    <button onClick=dispose()>Clear</button>
+    <button onClick=save()>Save</button>
+  </section>
+
+  <canvas id="myCanvas"></canvas>
+
+
+
+
+  <script src="js/world.js"></script>
+
+  <script src="js/graphEditor.js"></script>
+  <script src="js/viewport.js"></script>
+
+  <script src="js/math/utils.js"></script>
+  <script src="js/math/graph.js"></script>
+  <script src="js/prim/points.js"></script>
+  <script src="js/prim/segments.js"></script>
+  <script src="js/prim/polygon.js"></script>
+  <script src="js/prim/envelope.js"></script>
+
+
+
+  <script>
+
+
+
+    myCanvas.width=600;
+    myCanvas.height=600;
+
+    const ctx=myCanvas.getContext('2d');
+
+    const graphString=localStorage.getItem('graph');
+    const graphInfo=graphString?JSON.parse(graphString):null;
+    const graph=graphInfo?
+      Graph.load(graphInfo):
+      new Graph();
+    const world=new World(graph);
+    
+    const viewport=new Viewport(myCanvas);
+    const graphEditor=new GraphEditor(viewport,graph);
+
+    animate();
+
+    function animate(){
+      viewport.reset();
+      world.generate();
+      world.draw(ctx);
+      ctx.globalAlpha=0.3;
+      graphEditor.display();
+      requestAnimationFrame(animate);
+    }
+
+    function dispose(){
+      graphEditor.dispose();
+    }
+
+    function save(){
+      localStorage.setItem('graph',JSON.stringify(graph));
+    }
+</script>
+</body>
+
+</html>
